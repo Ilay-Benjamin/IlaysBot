@@ -1,9 +1,6 @@
 import logging
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.constants import ParseMode
-import datetime
-import json
-from datetime import datetime
 from telegram.ext import (
     filters,
     MessageHandler,
@@ -13,7 +10,6 @@ from telegram.ext import (
     CallbackQueryHandler,
     ConversationHandler,
 )
-
 
 
 async def creator (update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -41,52 +37,13 @@ async def help1 (update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def echo (update: Update, context: ContextTypes.DEFAULT_TYPE):
     userMessage = update.message.text
     user = update.message.from_user
-    first_name = user.first_name
-    last_name = user.last_name
-
-    with open('messages.txt', 'a', encoding='utf-8') as file:
-        current_time = datetime.now().strftime("%H:%M:%S")
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        file.write('[' + current_date + ' - ' + current_time + '] ' + first_name + ' sent: ' + userMessage + '\n')
-    if first_name == '✿ Benny ॐ۞':
-        await context.bot.send_message(chat_id=update.effective_chat.id, text='אני לא רוצה לדבר איתך')
-    elif first_name == 'איליי':
-        await context.bot.send_message(chat_id=update.effective_chat.id, text='אוהב אותך אחי')
-    else:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text='ההודעה שלך הועברה למנהל המערכת')
-    
+    first_name = update.message.chat.first_name
+    await context.bot.send_message(chat_id=update.effective_chat.id, text='היי ' + first_name)
 
 
-async def start(update: Update, context):
+async def start (update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.message.from_user
-    first_name = user.first_name
-    last_name = user.last_name
-    
-    # Prepare the data to be logged
-    object_data = {
-        'user': {
-            'first_name': first_name,
-            'last_name': last_name,
-            'id': user.id,
-        },
-        'time': str(datetime.now()),
-        'status': 'connected'
-    }
-    
-    # Write the data to info.json
-    with open('info.json', 'r+', encoding='utf-8') as file:
-        # Read the existing JSON data
-        json_data = json.load(file)
-        # Append the new data to the connections list
-        json_data['connections'].append(object_data)
-        # Move the file pointer to the beginning of the file
-        file.seek(0)
-        # Write the updated JSON data back to the file
-        json.dump(json_data, file, indent=4, ensure_ascii=False)
-
-    with open('logs.txt', 'a', encoding='utf-8') as file:
-        file.write('User ' + first_name + ' connected at ' + str(datetime.now()) + '\n')
-        
+    first_name = update.message.chat.first_name
     await context.bot.send_message(
         chat_id=update.effective_chat.id, text='נעים מאוד ' + first_name + ' אני רובוט שמסייע בקבלת תורים למרפאה, איך אני יכול לעזור לך? \n ניתן להקליד /help על מנת לקבל את רשימת הפקודות'
     )
